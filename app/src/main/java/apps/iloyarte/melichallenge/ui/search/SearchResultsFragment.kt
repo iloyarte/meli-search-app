@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.di.component.DaggerFragmentComponent
 import apps.iloyarte.melichallenge.di.module.FragmentModule
@@ -14,12 +17,13 @@ import apps.iloyarte.melichallenge.utils.toast
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
-class SearchResultsFragment : Fragment(), SearchContract.View {
+class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.SearchResultCallback {
 
     @Inject
     lateinit var presenter: SearchContract.Presenter
 
     private var listener: SearchResultsFragmentCallback? = null
+    private lateinit var mData: List<Item>
     private var query: String? = null
 
 
@@ -51,6 +55,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View {
     override fun showProgress(show: Boolean) {
         progress_wheel.visibility = if (show) View.VISIBLE else View.GONE
         item_list.visibility = if (show) View.GONE else View.VISIBLE
+        empty_list_message.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     override fun showErrorMessage(error: String) {
@@ -58,6 +63,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View {
     }
 
     override fun loadItems(list: List<Item>) {
+        mData = list
         if (list.isEmpty()) {
             item_list.visibility = View.GONE
             empty_list_message.visibility = View.VISIBLE
@@ -65,12 +71,17 @@ class SearchResultsFragment : Fragment(), SearchContract.View {
             item_list.visibility = View.VISIBLE
             empty_list_message.visibility = View.GONE
 
-            loadList(list)
+            renderList()
         }
     }
 
-    fun loadList(list: List<Item>) {
+    private fun renderList() {
+        item_list.layoutManager = LinearLayoutManager(activity)
+        item_list.adapter = SearchAdapter(activity!!, mData as ArrayList, this)
+    }
 
+    override fun itemDetail(itemId: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onAttach(context: Context) {

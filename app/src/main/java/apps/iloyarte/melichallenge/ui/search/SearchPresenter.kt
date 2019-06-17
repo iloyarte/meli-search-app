@@ -54,18 +54,13 @@ class SearchPresenter : SearchContract.Presenter {
                     items.add(item)
                 }
 
-                view.loadItems(items)
                 view.showProgress(false)
+                view.loadItems(items)
             }, { error ->
                 view.showProgress(false)
                 view.showErrorMessage(error.localizedMessage)
             })
 
         subscriptions.add(subscribe)
-
-
-
-        view.loadItems(emptyList())
-        view.showProgress(false)
     }
 }

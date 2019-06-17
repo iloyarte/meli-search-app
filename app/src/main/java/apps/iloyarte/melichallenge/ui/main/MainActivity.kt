@@ -8,6 +8,8 @@ import apps.iloyarte.melichallenge.di.module.ActivityModule
 import apps.iloyarte.melichallenge.ui.search.SearchFragment
 import apps.iloyarte.melichallenge.ui.search.SearchResultsFragment
 import javax.inject.Inject
+import android.view.MenuItem
+
 
 class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.SearchFragmentCallback,
     SearchResultsFragment.SearchResultsFragmentCallback {
@@ -17,7 +19,6 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         injectDependency()
         presenter.attach(this)
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
     }
 
     override fun showSearchResultsFragment(query: String) {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
             .replace(R.id.container_main, SearchResultsFragment.newInstance(query), SearchResultsFragment.TAG)
@@ -56,5 +60,24 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
         activityComponent.inject(this)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            // Respond to the action bar's Up/Home button
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0){
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+        }
+
+        super.onBackPressed()
+    }
 
 }

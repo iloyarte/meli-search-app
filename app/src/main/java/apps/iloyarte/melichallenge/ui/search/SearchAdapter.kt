@@ -15,10 +15,10 @@ class SearchAdapter(
     fragment: Fragment
 ) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
 
-    private val listener: onItemClickListener
+    private val listener: SearchResultCallback
 
     init {
-        this.listener = fragment as onItemClickListener
+        this.listener = fragment as SearchResultCallback
     }
 
 
@@ -53,7 +53,7 @@ class SearchAdapter(
         }
     }
 
-    interface onItemClickListener {
+    interface SearchResultCallback {
         fun itemDetail(itemId: String)
     }
 }
