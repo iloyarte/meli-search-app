@@ -99,6 +99,8 @@ class SearchResultsFragment : Fragment(), SearchContract.View {
     interface SearchResultsFragmentCallback
 
     companion object {
+        const val TAG = "SearchResultsFragment"
+
         @JvmStatic
         fun newInstance(query: String) =
             SearchResultsFragment().apply {

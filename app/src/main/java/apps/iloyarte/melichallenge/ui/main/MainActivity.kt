@@ -32,14 +32,15 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
         supportFragmentManager.beginTransaction()
             .disallowAddToBackStack()
 //            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .replace(R.id.container_main, SearchFragment.newInstance(), SearchFragment.TAG)
-            .commit()
+            .add(R.id.container_main, SearchFragment.newInstance(), SearchFragment.TAG)
+            .commitNow()
     }
 
     override fun showSearchResultsFragment(query: String) {
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .replace(R.id.container_main, SearchResultsFragment.newInstance(query), SearchFragment.TAG)
+            .replace(R.id.container_main, SearchResultsFragment.newInstance(query), SearchResultsFragment.TAG)
+            .addToBackStack(SearchResultsFragment.TAG)
             .commit()
     }
 

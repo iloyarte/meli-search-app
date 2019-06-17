@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import apps.iloyarte.melichallenge.R
+import apps.iloyarte.melichallenge.utils.onSubmit
 import apps.iloyarte.melichallenge.utils.toast
 import kotlinx.android.synthetic.main.search_fragment.*
+
 
 class SearchFragment : Fragment() {
 
@@ -23,6 +25,10 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        search_input.onSubmit {
+            search_button.performClick()
+        }
 
         search_button.setOnClickListener {
             if (!search_input.text.isNullOrEmpty()) {
