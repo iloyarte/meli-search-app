@@ -2,23 +2,35 @@ package apps.iloyarte.melichallenge.ui.search
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
 import apps.iloyarte.melichallenge.R
+import apps.iloyarte.melichallenge.di.component.DaggerFragmentComponent
+import apps.iloyarte.melichallenge.di.module.FragmentModule
+import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.utils.toast
+import kotlinx.android.synthetic.main.fragment_search_results.*
+import javax.inject.Inject
 
-class SearchResultsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class SearchResultsFragment : Fragment(), SearchContract.View {
+
+    @Inject
+    lateinit var presenter: SearchContract.Presenter
+
     private var listener: SearchResultsFragmentCallback? = null
+    private var query: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
+            query = it.getString("query")
         }
+
+        injectDependency()
     }
 
     override fun onCreateView(
@@ -29,6 +41,37 @@ class SearchResultsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_search_results, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.attach(this)
+        presenter.subscribe()
+        presenter.doSearch(query!!)
+    }
+
+    override fun showProgress(show: Boolean) {
+        progress_wheel.visibility = if (show) View.VISIBLE else View.GONE
+        item_list.visibility = if (show) View.GONE else View.VISIBLE
+    }
+
+    override fun showErrorMessage(error: String) {
+        activity?.toast(error)
+    }
+
+    override fun loadItems(list: List<Item>) {
+        if (list.isEmpty()) {
+            item_list.visibility = View.GONE
+            empty_list_message.visibility = View.VISIBLE
+        } else {
+            item_list.visibility = View.VISIBLE
+            empty_list_message.visibility = View.GONE
+
+            loadList(list)
+        }
+    }
+
+    fun loadList(list: List<Item>) {
+
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -44,25 +87,23 @@ class SearchResultsFragment : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface SearchResultsFragmentCallback {
+    private fun injectDependency() {
+        val fragmentComponent = DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule())
+            .build()
+
+        fragmentComponent.inject(this)
     }
+
+
+    interface SearchResultsFragmentCallback
 
     companion object {
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(query: String) =
             SearchResultsFragment().apply {
                 arguments = Bundle().apply {
+                    putString("query", query)
                 }
             }
     }

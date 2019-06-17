@@ -8,10 +8,8 @@ class MainContract {
     interface View : BaseContract.View {
         fun showAboutFragment()
         fun showSearchFragment()
-        fun showSearchResultsFragment()
+        fun showSearchResultsFragment(query: String)
     }
 
-    interface Presenter : BaseContract.Presenter<View> {
-
-    }
+    interface Presenter : BaseContract.Presenter<View>
 }

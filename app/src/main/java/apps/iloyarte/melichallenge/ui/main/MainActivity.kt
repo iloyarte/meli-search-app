@@ -3,13 +3,14 @@ package apps.iloyarte.melichallenge.ui.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import apps.iloyarte.melichallenge.R
+import apps.iloyarte.melichallenge.di.component.DaggerActivityComponent
 import apps.iloyarte.melichallenge.di.module.ActivityModule
 import apps.iloyarte.melichallenge.ui.search.SearchFragment
 import apps.iloyarte.melichallenge.ui.search.SearchResultsFragment
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainContract.View  {
-
+class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.SearchFragmentCallback,
+    SearchResultsFragment.SearchResultsFragmentCallback {
     @Inject
     lateinit var presenter: MainContract.Presenter
 
@@ -18,12 +19,9 @@ class MainActivity : AppCompatActivity(), MainContract.View  {
         setContentView(R.layout.activity_main)
 
 
-//        injectDependency()
-
+        injectDependency()
         presenter.attach(this)
         // A splash or some intro may be added here.
-
-
     }
 
     override fun showAboutFragment() {
@@ -38,20 +36,24 @@ class MainActivity : AppCompatActivity(), MainContract.View  {
             .commit()
     }
 
-    override fun showSearchResultsFragment() {
+    override fun showSearchResultsFragment(query: String) {
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .replace(R.id.container_main, SearchResultsFragment.newInstance(), SearchFragment.TAG)
+            .replace(R.id.container_main, SearchResultsFragment.newInstance(query), SearchFragment.TAG)
             .commit()
     }
 
-//    private fun injectDependency() {
-//        val activityComponent = DaggerActivityComponent.builder()
-//            .activityModule(ActivityModule(this))
-//            .build()
-//
-//        activityComponent.inject(this)
-//    }
+    override fun search(query: String) {
+        showSearchResultsFragment(query)
+    }
+
+    private fun injectDependency() {
+        val activityComponent = DaggerActivityComponent.builder()
+            .activityModule(ActivityModule(this))
+            .build()
+
+        activityComponent.inject(this)
+    }
 
 
 }

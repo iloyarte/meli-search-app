@@ -5,7 +5,7 @@ import apps.iloyarte.melichallenge.di.component.ApplicationComponent
 import apps.iloyarte.melichallenge.di.component.DaggerApplicationComponent
 import apps.iloyarte.melichallenge.di.module.ApplicationModule
 
-class BaseApp : Application(){
+class BaseApp : Application() {
 
     lateinit var component: ApplicationComponent
 
