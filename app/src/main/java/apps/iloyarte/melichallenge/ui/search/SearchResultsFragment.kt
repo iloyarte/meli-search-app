@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.di.component.DaggerFragmentComponent
@@ -17,7 +18,7 @@ import apps.iloyarte.melichallenge.utils.toast
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
 
-class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.SearchResultCallback {
+class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.SearchResultsAdapterCallback {
 
     @Inject
     lateinit var presenter: SearchContract.Presenter
@@ -48,7 +49,6 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attach(this)
-        presenter.subscribe()
         presenter.doSearch(query!!)
     }
 
@@ -76,12 +76,13 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     }
 
     private fun renderList() {
-        item_list.layoutManager = LinearLayoutManager(activity)
+        // Setup 2 column grid
+        item_list.layoutManager = GridLayoutManager(activity, 2)
         item_list.adapter = SearchAdapter(activity!!, mData as ArrayList, this)
     }
 
-    override fun itemDetail(itemId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun itemDetail(item: Item) {
+        listener?.showItemDetailsFragment(item)
     }
 
     override fun onAttach(context: Context) {
@@ -95,6 +96,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
 
     override fun onDetach() {
         super.onDetach()
+        presenter.unsubscribe()
         listener = null
     }
 
@@ -107,7 +109,9 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     }
 
 
-    interface SearchResultsFragmentCallback
+    interface SearchResultsFragmentCallback {
+        fun showItemDetailsFragment(item: Item)
+    }
 
     companion object {
         const val TAG = "SearchResultsFragment"

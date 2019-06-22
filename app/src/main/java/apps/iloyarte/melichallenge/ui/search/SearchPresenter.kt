@@ -14,10 +14,9 @@ class SearchPresenter : SearchContract.Presenter {
     private val api: SearchServiceAPI = SearchServiceAPI.create()
     private lateinit var view: SearchContract.View
 
-    override fun subscribe() {
-    }
 
     override fun unsubscribe() {
+        subscriptions.clear()
     }
 
     override fun attach(view: SearchContract.View) {
@@ -25,7 +24,7 @@ class SearchPresenter : SearchContract.Presenter {
     }
 
     override fun doSearch(query: String) {
-        var subscribe = api.search(query).subscribeOn(Schedulers.io())
+        val subscribe = api.search(query).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ response: SearchResponse ->
                 val items = ArrayList<Item>()

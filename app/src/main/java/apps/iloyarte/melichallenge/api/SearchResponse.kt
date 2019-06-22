@@ -29,7 +29,7 @@ data class Result(
     val sold_quantity: Int,
     val currency_id: String,
     val original_price: Float?,
-    val price: Int,
+    val price: Float,
 
     // Some extra display info
     val attributes: List<Attribute>,

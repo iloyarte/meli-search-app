@@ -1,18 +1,24 @@
 package apps.iloyarte.melichallenge.ui.main
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.di.component.DaggerActivityComponent
 import apps.iloyarte.melichallenge.di.module.ActivityModule
+import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.ui.details.ItemDetailsFragment
 import apps.iloyarte.melichallenge.ui.search.SearchFragment
 import apps.iloyarte.melichallenge.ui.search.SearchResultsFragment
 import javax.inject.Inject
-import android.view.MenuItem
 
 
-class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.SearchFragmentCallback,
-    SearchResultsFragment.SearchResultsFragmentCallback {
+class MainActivity : AppCompatActivity(),
+    MainContract.View,
+    SearchFragment.SearchFragmentCallback,
+    SearchResultsFragment.SearchResultsFragmentCallback,
+    ItemDetailsFragment.ItemDetailsFragmentCallback {
+
     @Inject
     lateinit var presenter: MainContract.Presenter
 
@@ -48,6 +54,15 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
             .commit()
     }
 
+
+    override fun showItemDetailsFragment(item: Item) {
+        supportFragmentManager.beginTransaction()
+//            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
+            .replace(R.id.container_main, ItemDetailsFragment.newInstance(item), ItemDetailsFragment.TAG)
+            .addToBackStack(ItemDetailsFragment.TAG)
+            .commit()
+    }
+
     override fun search(query: String) {
         showSearchResultsFragment(query)
     }
@@ -72,7 +87,7 @@ class MainActivity : AppCompatActivity(), MainContract.View, SearchFragment.Sear
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0){
+        if (supportFragmentManager.backStackEntryCount > 0) {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
             supportActionBar?.setDisplayShowHomeEnabled(false)
         }

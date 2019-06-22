@@ -23,6 +23,7 @@ ext {
     rxandroid_version = '2.0.2'
     dagger2_version = '2.23.1'
     support_version = '26.1.0'
+    glide_version = '4.9.0'
 }
 
 allprojects {

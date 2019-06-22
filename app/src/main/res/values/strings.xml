@@ -4,7 +4,9 @@
     <string name="search_hint">Ingrese su búsqueda aquí</string>
     <string name="search_button">Buscar</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Errors -->
+    <string name="empty_search_input_error">Debe ingresar una búsqueda.</string>
     <string name="search_no_results">No hay resultados para su búsqueda.</string>
+    <string name="image_content_description">Foto del producto</string>
+    <string name="chooser_title">Abrir en otra aplicación</string>
 </resources>

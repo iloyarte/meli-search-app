@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.models.Item
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 class SearchAdapter(
@@ -15,10 +16,10 @@ class SearchAdapter(
     fragment: Fragment
 ) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
 
-    private val listener: SearchResultCallback
+    private val listener: SearchResultsAdapterCallback
 
     init {
-        this.listener = fragment as SearchResultCallback
+        this.listener = fragment as SearchResultsAdapterCallback
     }
 
 
@@ -27,14 +28,14 @@ class SearchAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        var item = list[position]
-         holder.bind(item)
+        val item = list[position]
+        holder.bind(item)
 //        holder!!.title!!.setText(post.title)
 //        holder.body!!.setText(post.body)
 //
-//        holder.layout!!.setOnClickListener {
-//            listener.itemDetail(post.id.toString()!!)
-//        }
+        holder.itemView.setOnClickListener {
+            listener.itemDetail(item)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -45,15 +46,21 @@ class SearchAdapter(
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: Item) {
-            with(itemView){
-//                item_id.text = item.id
+            with(itemView) {
+                // Load image asynchronously
+                Glide
+                    .with(context)
+                    .load(item.thumbnail)
+                    .into(item_thumbnail)
+
                 item_title.text = item.title
+                item_price.text = "$${(item.original_price ?: item.price)}"
 
             }
         }
     }
 
-    interface SearchResultCallback {
-        fun itemDetail(itemId: String)
+    interface SearchResultsAdapterCallback {
+        fun itemDetail(item: Item)
     }
 }

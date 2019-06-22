@@ -1,5 +1,7 @@
 package apps.iloyarte.melichallenge.models
 
+import java.io.Serializable
+
 data class Item(
     val id: String,
     val site_id: String,
@@ -7,7 +9,7 @@ data class Item(
 
     // Seller profile, data model?
 //    val seller: String,
-    val price: Int,
+    val price: Float,
     val currency_id: String,
 //    val available_quantity: String,
 //    val sold_quantity: String,
@@ -25,14 +27,14 @@ data class Item(
 //    val attributes: String,
     val original_price: Float?,
     val tags: List<String>
-)
+): Serializable
 
 data class Address(
     val state_id: String,
     val state_name: String,
     val city_id: String,
     val city_name: String
-)
+): Serializable
 
 /*
 * {

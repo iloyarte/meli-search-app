@@ -34,9 +34,10 @@ class SearchFragment : Fragment() {
             if (!search_input.text.isNullOrEmpty()) {
                 listener?.search(search_input.text.toString())
             } else {
-                activity?.toast("Debe ingresar una búsqueda.")
+                activity?.toast(getString(R.string.empty_search_input_error))
             }
         }
+
     }
 
     override fun onAttach(context: Context) {

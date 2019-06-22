@@ -12,9 +12,4 @@ class FragmentModule {
     fun provideSearchPresenter(): SearchContract.Presenter {
         return SearchPresenter()
     }
-
-//    @Provides
-//    fun provideApiService(): ApiServiceInterface {
-//        return ApiServiceInterface.create()
-//    }
 }
