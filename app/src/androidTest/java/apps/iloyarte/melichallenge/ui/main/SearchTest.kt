@@ -31,7 +31,7 @@ class SearchTest {
 
     @Before
     fun initValidString() {
-        searchString = "ipod"
+        searchString = "toalla"
     }
 
 
@@ -49,7 +49,9 @@ class SearchTest {
             pressImeActionButton()
         )
 
-        val itemList = onView(withId(R.id.item_list))
+        Thread.sleep(3000)
+
+        val itemList = onView(withId(R.id.result_list))
 
         itemList.check { view, noViewFoundException ->
             noViewFoundException?.apply {
@@ -78,12 +80,13 @@ class SearchTest {
             pressImeActionButton()
         )
 
-        val itemList = onView(withId(R.id.item_list))
+        // Waiting for data to load.
+        Thread.sleep(3000)
 
+        val itemList = onView(withId(R.id.result_list))
         itemList.perform(
             RecyclerViewActions.actionOnItemAtPosition<SearchAdapter.ItemViewHolder>(0, click())
         )
-
     }
 
 }

@@ -3,10 +3,11 @@ package apps.iloyarte.melichallenge.ui.main
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.di.component.DaggerActivityComponent
 import apps.iloyarte.melichallenge.di.module.ActivityModule
-import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.models.Result
 import apps.iloyarte.melichallenge.ui.details.ItemDetailsFragment
 import apps.iloyarte.melichallenge.ui.search.SearchFragment
 import apps.iloyarte.melichallenge.ui.search.SearchResultsFragment
@@ -22,43 +23,41 @@ class MainActivity : AppCompatActivity(),
     @Inject
     lateinit var presenter: MainContract.Presenter
 
+    private lateinit var actualFragment: Fragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        injectDependency()
-        presenter.attach(this)
-        // A splash or some intro may be added here.
-    }
-
-    override fun showAboutFragment() {
-
+        if (savedInstanceState == null) {
+            injectDependency()
+            presenter.attach(this)
+        }
     }
 
     override fun showSearchFragment() {
+        actualFragment = SearchFragment.newInstance()
         supportFragmentManager.beginTransaction()
             .disallowAddToBackStack()
-//            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .add(R.id.container_main, SearchFragment.newInstance(), SearchFragment.TAG)
+            .add(R.id.container_main, actualFragment, SearchFragment.TAG)
             .commitNow()
     }
 
     override fun showSearchResultsFragment(query: String) {
+        actualFragment = SearchResultsFragment.newInstance(query)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         supportFragmentManager.beginTransaction()
-//            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .replace(R.id.container_main, SearchResultsFragment.newInstance(query), SearchResultsFragment.TAG)
+            .replace(R.id.container_main, actualFragment, SearchResultsFragment.TAG)
             .addToBackStack(SearchResultsFragment.TAG)
             .commit()
     }
 
 
-    override fun showItemDetailsFragment(item: Item) {
+    override fun showItemDetailsFragment(item: Result) {
+        actualFragment = ItemDetailsFragment.newInstance(item)
         supportFragmentManager.beginTransaction()
-//            .setCustomAnimations(AnimType.SLIDE.getAnimPair().first, AnimType.SLIDE.getAnimPair().second)
-            .replace(R.id.container_main, ItemDetailsFragment.newInstance(item), ItemDetailsFragment.TAG)
+            .replace(R.id.container_main, actualFragment, ItemDetailsFragment.TAG)
             .addToBackStack(ItemDetailsFragment.TAG)
             .commit()
     }
@@ -87,11 +86,17 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            supportActionBar?.setDisplayShowHomeEnabled(false)
+        when (actualFragment) {
+            is SearchResultsFragment -> {
+                actualFragment = supportFragmentManager.findFragmentByTag(SearchFragment.TAG)!!
+                title = getString(R.string.app_name)
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                supportActionBar?.setDisplayShowHomeEnabled(false)
+            }
+            is ItemDetailsFragment -> {
+                actualFragment = supportFragmentManager.findFragmentByTag(SearchResultsFragment.TAG)!!
+            }
         }
-
         super.onBackPressed()
     }
 

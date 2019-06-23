@@ -1,6 +1,7 @@
 package apps.iloyarte.melichallenge.ui.search
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,11 @@ import kotlinx.android.synthetic.main.search_fragment.*
 class SearchFragment : Fragment() {
 
     private var listener: SearchFragmentCallback? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true;
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,13 +43,14 @@ class SearchFragment : Fragment() {
                 activity?.toast(getString(R.string.empty_search_input_error))
             }
         }
-
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is SearchFragmentCallback) {
             listener = context
+            activity?.title = getString(R.string.app_name)
         } else {
             throw RuntimeException("$context must implement SearchFragmentCallback")
         }
@@ -53,6 +60,11 @@ class SearchFragment : Fragment() {
         super.onDetach()
         listener = null
     }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        outState.putString("search", search_input.text.toString())
+//        super.onSaveInstanceState(outState)
+//    }
 
     interface SearchFragmentCallback {
         fun search(query: String)

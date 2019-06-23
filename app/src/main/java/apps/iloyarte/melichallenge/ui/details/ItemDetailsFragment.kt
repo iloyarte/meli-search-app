@@ -2,6 +2,7 @@ package apps.iloyarte.melichallenge.ui.details
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,25 +10,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import apps.iloyarte.melichallenge.R
-import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.models.Result
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_item_details.*
-import android.content.DialogInterface
-
 
 
 private const val ARG_ITEM = "item"
 
 class ItemDetailsFragment : Fragment() {
 
-    private lateinit var item: Item
+    private lateinit var item: Result
     private var listener: ItemDetailsFragmentCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        retainInstance = true
         arguments?.let {
-            item = it.getSerializable(ARG_ITEM) as Item
+            item = it.getSerializable(ARG_ITEM) as Result
         }
     }
 
@@ -50,7 +51,12 @@ class ItemDetailsFragment : Fragment() {
             .load(item.thumbnail)
             .into(item_image)
 
+        activity?.title = item.title
         item_title.text = item.title
+
+        attributes_grid.adapter = AttributeAdapter(activity!!, item)
+        attributes_grid.layoutManager = GridLayoutManager(activity, 2)
+
 
         // Launch view intent and open Mercado Libre / web explorer
         view_in_app.setOnClickListener {
@@ -62,7 +68,7 @@ class ItemDetailsFragment : Fragment() {
     }
 
 
-    private fun openConfirmDialog(func: () -> Unit){
+    private fun openConfirmDialog(func: () -> Unit) {
         val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
             when (which) {
                 DialogInterface.BUTTON_POSITIVE -> {
@@ -83,6 +89,7 @@ class ItemDetailsFragment : Fragment() {
             .show()
 
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ItemDetailsFragmentCallback) {
@@ -97,14 +104,12 @@ class ItemDetailsFragment : Fragment() {
         listener = null
     }
 
-
-    interface ItemDetailsFragmentCallback {
-    }
+    interface ItemDetailsFragmentCallback
 
     companion object {
         const val TAG = "ItemDetailsFragment"
         @JvmStatic
-        fun newInstance(item: Item) =
+        fun newInstance(item: Result) =
             ItemDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_ITEM, item)

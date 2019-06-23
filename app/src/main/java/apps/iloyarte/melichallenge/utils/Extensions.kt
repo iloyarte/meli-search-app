@@ -12,18 +12,8 @@ fun Activity.toast(toast: String) {
     Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
 }
 
-fun AppCompatActivity.replaceFragment(container: Int, fragment: Fragment, backstack: Boolean) {
-    val transaction = supportFragmentManager.beginTransaction()
-        .replace(container, fragment)
-
-    if (backstack) {
-        transaction
-            .addToBackStack(fragment.tag)
-            .commit()
-    } else {
-        transaction.commitNow()
-    }
-
+fun Fragment.title(title: String){
+    activity?.title = title
 }
 
 

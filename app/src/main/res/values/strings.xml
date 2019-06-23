@@ -9,4 +9,6 @@
     <string name="search_no_results">No hay resultados para su búsqueda.</string>
     <string name="image_content_description">Foto del producto</string>
     <string name="chooser_title">Abrir en otra aplicación</string>
+    <string name="condition_label">Condición</string>
+    <string name="zone_label">Zona</string>
 </resources>

@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import apps.iloyarte.melichallenge.R
-import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.models.Result
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.item_layout.view.*
+import kotlinx.android.synthetic.main.item_item.view.*
 
 class SearchAdapter(
-    private val context: Context, private val list: MutableList<Item>,
+    private val context: Context, private val list: MutableList<Result>,
     fragment: Fragment
 ) : RecyclerView.Adapter<SearchAdapter.ItemViewHolder>() {
 
@@ -39,13 +39,13 @@ class SearchAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_layout, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.item_item, parent, false)
         return ItemViewHolder(itemView)
     }
 
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: Item) {
+        fun bind(item: Result) {
             with(itemView) {
                 // Load image asynchronously
                 Glide
@@ -61,6 +61,6 @@ class SearchAdapter(
     }
 
     interface SearchResultsAdapterCallback {
-        fun itemDetail(item: Item)
+        fun itemDetail(item: Result)
     }
 }

@@ -5,15 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import apps.iloyarte.melichallenge.R
 import apps.iloyarte.melichallenge.di.component.DaggerFragmentComponent
 import apps.iloyarte.melichallenge.di.module.FragmentModule
-import apps.iloyarte.melichallenge.models.Item
+import apps.iloyarte.melichallenge.models.Result
 import apps.iloyarte.melichallenge.utils.toast
 import kotlinx.android.synthetic.main.fragment_search_results.*
 import javax.inject.Inject
@@ -24,13 +21,13 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     lateinit var presenter: SearchContract.Presenter
 
     private var listener: SearchResultsFragmentCallback? = null
-    private lateinit var mData: List<Item>
+    private lateinit var mData: List<Result>
     private var query: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        retainInstance = true
         arguments?.let {
             query = it.getString("query")
         }
@@ -54,7 +51,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
 
     override fun showProgress(show: Boolean) {
         progress_wheel.visibility = if (show) View.VISIBLE else View.GONE
-        item_list.visibility = if (show) View.GONE else View.VISIBLE
+        result_list.visibility = if (show) View.GONE else View.VISIBLE
         empty_list_message.visibility = if (show) View.GONE else View.VISIBLE
     }
 
@@ -62,13 +59,13 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
         activity?.toast(error)
     }
 
-    override fun loadItems(list: List<Item>) {
+    override fun loadItems(list: List<Result>) {
         mData = list
         if (list.isEmpty()) {
-            item_list.visibility = View.GONE
+            result_list.visibility = View.GONE
             empty_list_message.visibility = View.VISIBLE
         } else {
-            item_list.visibility = View.VISIBLE
+            result_list.visibility = View.VISIBLE
             empty_list_message.visibility = View.GONE
 
             renderList()
@@ -77,14 +74,19 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
 
     private fun renderList() {
         // Setup 2 column grid
-        item_list.layoutManager = GridLayoutManager(activity, 2)
-        item_list.adapter = SearchAdapter(activity!!, mData as ArrayList, this)
+        result_list.layoutManager = GridLayoutManager(activity, 2)
+        result_list.adapter = SearchAdapter(activity!!, mData as ArrayList, this)
     }
 
-    override fun itemDetail(item: Item) {
+    override fun itemDetail(item: Result) {
         listener?.showItemDetailsFragment(item)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!query.isNullOrEmpty())
+            activity?.title = query
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is SearchResultsFragmentCallback) {
@@ -100,6 +102,10 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
         listener = null
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     private fun injectDependency() {
         val fragmentComponent = DaggerFragmentComponent.builder()
             .fragmentModule(FragmentModule())
@@ -108,9 +114,8 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
         fragmentComponent.inject(this)
     }
 
-
     interface SearchResultsFragmentCallback {
-        fun showItemDetailsFragment(item: Item)
+        fun showItemDetailsFragment(item: Result)
     }
 
     companion object {
