@@ -21,12 +21,14 @@ class SearchPresenter : SearchContract.Presenter {
         this.view = view
     }
 
+    // Lanza el request de búsqueda y parsea los resultados.
     override fun doSearch(query: String) {
         val subscribe = api.search(query).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ response: SearchResponse ->
 
                 view.showProgress(false)
+                // Cargo los items encontrados a la vista.
                 view.loadItems(response.results)
             }, { error ->
                 view.showProgress(false)

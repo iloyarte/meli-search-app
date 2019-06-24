@@ -46,6 +46,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attach(this)
+        // Lanza la búsqueda.
         presenter.doSearch(query!!)
     }
 
@@ -60,6 +61,7 @@ class SearchResultsFragment : Fragment(), SearchContract.View, SearchAdapter.Sea
     }
 
     override fun loadItems(list: List<Result>) {
+        // Cargo los resultados a la lista.
         mData = list
         if (list.isEmpty()) {
             result_list.visibility = View.GONE

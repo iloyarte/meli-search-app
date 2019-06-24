@@ -54,6 +54,7 @@ class ItemDetailsFragment : Fragment() {
         activity?.title = item.title
         item_title.text = item.title
 
+        // Grilla dinámica de atributos.
         attributes_grid.adapter = AttributeAdapter(activity!!, item)
         attributes_grid.layoutManager = GridLayoutManager(activity, 2)
 
